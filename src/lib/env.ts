@@ -1,0 +1,35 @@
+import { z } from "zod";
+
+const serverSchema = z.object({
+  DATABASE_URL: z.string().default("postgresql://postgres:postgres@localhost:5432/landing_saas?schema=public"),
+  ROOT_DOMAIN: z.string().default("localhost:3000"),
+  APP_SUBDOMAIN: z.string().default("app"),
+  ADMIN_SUBDOMAIN: z.string().default("admin"),
+  BILLING_PROVIDER: z.enum(["mock", "mercadopago", "asaas"]).default("mock"),
+  ENABLE_EDITOR_UI: z.coerce.boolean().default(false),
+  REQUIRE_EMAIL_VERIFICATION: z.coerce.boolean().default(true),
+  ENABLE_AUTH_ONLY_MODE: z.coerce.boolean().default(false),
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_BASE_URL: z.union([z.string().url(), z.literal("")]).optional().transform((value) => value || undefined),
+  OPENAI_LANDING_MODEL: z.string().default("gpt-4.1-mini"),
+  FIREBASE_PROJECT_ID: z.string().optional(),
+  FIREBASE_CLIENT_EMAIL: z.string().optional(),
+  FIREBASE_PRIVATE_KEY: z.string().optional(),
+  S3_REGION: z.string().default("auto"),
+  S3_ENDPOINT: z.string().optional(),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_PUBLIC_URL_BASE: z.string().optional(),
+  NEXT_PUBLIC_WHATSAPP_NUMBER: z.string().default("5511952924309"),
+  NEXT_PUBLIC_CONTACT_PHONE: z.string().default("+55 (11) 95292-4309"),
+  NEXT_PUBLIC_CONTACT_EMAIL: z.string().email().default("igor.ss@up-gestora.com.br"),
+  ASAAS_BASIC_MONTHLY_CHECKOUT_URL: z.string().optional(),
+  ASAAS_BASIC_ANNUAL_CHECKOUT_URL: z.string().optional(),
+  ASAAS_PLENO_MONTHLY_CHECKOUT_URL: z.string().optional(),
+  ASAAS_PLENO_ANNUAL_CHECKOUT_URL: z.string().optional(),
+  ASAAS_COMMERCE_CHECKOUT_URL: z.string().optional(),
+  ASAAS_WEBHOOK_TOKEN: z.string().optional(),
+});
+
+export const env = serverSchema.parse(process.env);
