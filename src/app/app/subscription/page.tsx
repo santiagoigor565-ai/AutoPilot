@@ -86,7 +86,7 @@ export default async function SubscriptionPage() {
           <Badge variant="secondary">Status: {statusLabels[subscription.status] ?? subscription.status}</Badge>
           <Badge variant="outline">Provider: {providerName}</Badge>
           <Badge variant="outline">Publicadas: {pagesPublished}</Badge>
-          <Button asChild variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm" className="border-[#19A85E]/45 text-[#157748] hover:bg-[#e8f8ef]">
             <a href={supportWhatsapp} target="_blank" rel="noreferrer">
               Suporte no WhatsApp
             </a>
@@ -162,7 +162,7 @@ export default async function SubscriptionPage() {
           <CardContent className="space-y-4">
             <p className="text-3xl font-semibold">Personalizado</p>
             <p className="text-sm text-muted-foreground">Suporte exclusivo, dashboard e recursos sob demanda.</p>
-            <Button variant="outline" className="w-full" asChild>
+            <Button variant="outline" className="w-full border-[#19A85E]/45 text-[#157748] hover:bg-[#e8f8ef]" asChild>
               <a href={commerceWhatsapp} target="_blank" rel="noreferrer">
                 Falar no WhatsApp
               </a>

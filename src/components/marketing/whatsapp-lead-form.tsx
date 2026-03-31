@@ -119,7 +119,7 @@ export function WhatsappLeadForm({ whatsappNumber, defaultMessage, className }: 
           className="min-h-28 border-[#cbbda5] bg-[#fffaf0]"
         />
       </div>
-      <Button type="submit" className="primary-glow h-11 w-full rounded-full bg-[#0f826f] text-[#f4fffd] hover:bg-[#0c6d5d]">
+      <Button type="submit" className="primary-glow h-11 w-full rounded-full bg-[#19A85E] text-[#f4fff8] hover:bg-[#14884b]">
         Enviar para WhatsApp
         <Send className="h-4 w-4" />
       </Button>

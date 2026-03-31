@@ -63,7 +63,7 @@ html {
 
 @media (min-width: 1024px) {
   html {
-    zoom: 80%;
+    zoom: 100%;
   }
 }
 
@@ -108,6 +108,96 @@ a {
   background-image:
     linear-gradient(120deg, rgb(0 119 255 / 10%) 0%, transparent 32%),
     linear-gradient(300deg, rgb(31 210 167 / 10%) 0%, transparent 36%);
+}
+
+.partners-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.partners-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 0;
+  animation: partner-scroll 26s linear infinite;
+}
+
+.partners-group {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: max-content;
+  align-items: center;
+  gap: 2rem;
+  padding-inline: 1rem;
+}
+
+.partners-marquee:hover .partners-track {
+  animation-play-state: paused;
+}
+
+.partner-item {
+  display: inline-flex;
+  min-width: 200px;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #173961;
+  transition: color 220ms ease, filter 220ms ease, opacity 220ms ease, background-color 220ms ease;
+}
+
+.partners-track:hover .partner-item {
+  filter: none;
+  opacity: 1;
+  color: #173961;
+}
+
+.partners-track .partner-item:hover {
+  filter: none;
+  opacity: 1;
+  color: #173961;
+  background: transparent;
+}
+
+.project-switch-panel {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.project-switch-panel.is-fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.project-switch-panel.is-fade-in {
+  animation: switch-fade-in 220ms ease forwards;
+}
+
+.scope-switch-content {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.scope-switch-content.is-fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.scope-switch-content.is-fade-in {
+  animation: switch-fade-in 220ms ease forwards;
+}
+
+.app-entry {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.995);
+  filter: blur(6px);
+  animation: app-fade-in 680ms cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
 }
 
 .surface-card {
@@ -209,5 +299,68 @@ a {
   }
   50% {
     transform: translateY(-4px);
+  }
+}
+
+@keyframes partner-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes switch-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.995);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-entry {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
+  }
+
+  .partners-track {
+    animation: none;
+    transform: none;
+  }
+
+  .project-switch-panel {
+    transition: none;
+  }
+
+  .project-switch-panel.is-fade-in {
+    animation: none;
+  }
+
+  .scope-switch-content {
+    transition: none;
+  }
+
+  .scope-switch-content.is-fade-in {
+    animation: none;
   }
 }

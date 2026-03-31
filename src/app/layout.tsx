@@ -29,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${heading.variable} ${body.variable} bg-background text-foreground antialiased`}>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          <div className="app-entry">{children}</div>
+        </AppProviders>
       </body>
     </html>
   );

@@ -32,6 +32,10 @@ const plenoMonthlyHref = resolveAsaasCheckoutLink("pleno", "monthly") ?? buildPl
 const plenoAnnualHref = resolveAsaasCheckoutLink("pleno", "annual") ?? buildPlanFallbackWhatsapp("pleno", "annual");
 const commerceHref = resolveAsaasCheckoutLink("commerce", "monthly") ?? buildPlanFallbackWhatsapp("commerce", "monthly");
 
+function isWhatsappUrl(url: string) {
+  return url.includes("wa.me/");
+}
+
 const plans: Plan[] = [
   {
     name: "Basic",
@@ -124,12 +128,17 @@ export default function PricingPage() {
                     <Button
                       key={cta.label}
                       asChild
-                      className={
-                        index === 0
+                      className={(() => {
+                        const isWhatsappDirect = isWhatsappUrl(cta.href);
+                        if (isWhatsappDirect) {
+                          return "w-full rounded-xl bg-[#19A85E] text-[#f4fff8] hover:bg-[#14884b]";
+                        }
+
+                        return index === 0
                           ? "w-full rounded-xl bg-[linear-gradient(180deg,#2b8cff,#0067e6)] text-[#eef6ff] hover:bg-[linear-gradient(180deg,#2394ff,#005fd3)]"
-                          : "w-full rounded-xl border border-[#8eb6e7] bg-transparent text-[#1d4675] hover:bg-[#e4efff]"
-                      }
-                      variant={index === 0 ? "default" : "outline"}
+                          : "w-full rounded-xl border border-[#8eb6e7] bg-transparent text-[#1d4675] hover:bg-[#e4efff]";
+                      })()}
+                      variant={isWhatsappUrl(cta.href) || index === 0 ? "default" : "outline"}
                     >
                       <Link href={cta.href} target="_blank" rel="noreferrer">
                         {cta.label}
@@ -146,7 +155,15 @@ export default function PricingPage() {
           <p className="text-sm text-[#486b98]">
             Precisa de orientação para escolher o plano? Nossa equipe responde rápido e indica o melhor cenário para seu momento.
           </p>
-          <Button asChild variant="outline" className="mt-4 rounded-full border-[#85afe3] bg-transparent text-[#1d4675] hover:bg-[#e4efff]">
+          <Button
+            asChild
+            variant={isWhatsappUrl(commerceHref) ? "default" : "outline"}
+            className={
+              isWhatsappUrl(commerceHref)
+                ? "mt-4 rounded-full bg-[#19A85E] text-[#f4fff8] hover:bg-[#14884b]"
+                : "mt-4 rounded-full border-[#85afe3] bg-transparent text-[#1d4675] hover:bg-[#e4efff]"
+            }
+          >
             <Link href={commerceHref} target="_blank" rel="noreferrer">
               Falar com especialista
               <ArrowRight className="h-4 w-4" />
