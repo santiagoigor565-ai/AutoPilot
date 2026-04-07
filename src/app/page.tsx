@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   BadgeCheck,
@@ -12,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { ProjectSwitch } from "@/components/marketing/project-switch";
 import { WhatsappLeadForm } from "@/components/marketing/whatsapp-lead-form";
 import { ActiveScopesShowcase } from "@/components/marketing/active-scopes-showcase";
+import { ProjectsProductionMiniPlayer } from "@/components/marketing/projects-production-miniplayer";
+import { FloatingWhatsappButton } from "@/components/marketing/floating-whatsapp-button";
 import { buildWhatsappHref, contact } from "@/lib/contact";
 
 type NavigationItem = {
@@ -34,14 +37,20 @@ type BusinessModelItem = {
 
 type ProjectItem = {
   name: string;
-  category: string;
-  summary: string;
   href: string;
+  previewImageSrc: string;
+  previewWidth: number;
+  previewHeight: number;
 };
 
 type FaqItem = {
   question: string;
   answer: string;
+};
+
+type PartnerLogo = {
+  name: string;
+  src: string;
 };
 
 const navigation: NavigationItem[] = [
@@ -93,27 +102,31 @@ const businessModels: BusinessModelItem[] = [
 const projects: ProjectItem[] = [
   {
     name: "AutoWhats",
-    category: "Produto proprietário (SaaS)",
-    summary: "Automação de WhatsApp com IA para atendimento comercial e escala de conversas.",
     href: "https://auto-whats.vercel.app/pt",
+    previewImageSrc: "/projects-previews/autowhats.png",
+    previewWidth: 1000,
+    previewHeight: 6279,
   },
   {
     name: "Findmy Angel",
-    category: "Sistema sob medida",
-    summary: "Plataforma desenvolvida para resolver fluxo operacional específico de negócio.",
     href: "https://www.findmyangel.com/",
+    previewImageSrc: "/projects-previews/findmy-angel.png",
+    previewWidth: 1000,
+    previewHeight: 7193,
   },
   {
     name: "Doutor Eu",
-    category: "Projeto direcional",
-    summary: "Implementação personalizada com foco em presença digital e jornada de aquisição.",
     href: "https://projeto-tadeu-adv-web.vercel.app/",
+    previewImageSrc: "/projects-previews/doutor-eu.png",
+    previewWidth: 1000,
+    previewHeight: 3427,
   },
   {
     name: "CAMAF",
-    category: "Landing page com integrações",
-    summary: "Exemplo de landing page pronta para conversão com canais externos conectados.",
     href: "https://camaf-davi.vercel.app/",
+    previewImageSrc: "/projects-previews/camaf.png",
+    previewWidth: 1000,
+    previewHeight: 782,
   },
 ];
 
@@ -148,7 +161,14 @@ const contactEmail = contact.email;
 const heroWhatsappMessage = "Oi! Quero mapear um projeto de programação para minha empresa.";
 const whatsappHref = buildWhatsappHref(heroWhatsappMessage);
 
-const partners = ["TESTE 01", "TESTE 02", "TESTE 03", "TESTE 04", "TESTE 05", "TESTE 06", "TESTE 07", "TESTE 08", "TESTE 09"];
+const partners: PartnerLogo[] = [
+  { name: "Parceiro 01", src: "/partners/parceiro-01.png" },
+  { name: "Parceiro 02", src: "/partners/parceiro-02.png" },
+  { name: "Parceiro 03", src: "/partners/parceiro-03.png" },
+  { name: "Parceiro 04", src: "/partners/parceiro-04.png" },
+  { name: "Parceiro 05", src: "/partners/parceiro-05.png" },
+  { name: "Parceiro 06", src: "/partners/parceiro-06.png" },
+];
 
 export default function HomePage() {
   return (
@@ -196,63 +216,66 @@ export default function HomePage() {
       </header>
 
       <main>
-        <section className="mx-auto grid w-full max-w-[1520px] gap-8 px-2 pb-18 pt-16 md:grid-cols-[1.08fr_0.92fr] md:items-center md:px-3">
-          <div className="reveal">
-            <p className="section-kicker">Produtos Proprietários + Software House</p>
-            <h1 className="section-title">
-              Projetos de programação para empresas: <span className="text-[#0077ff]">sistemas, automações com IA e landing pages de alta conversão</span>.
-            </h1>
-            <p className="section-text max-w-2xl">
-              Atuamos em duas frentes: softwares próprios com assinatura e desenvolvimento sob medida para operações PJ que precisam escalar com velocidade.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="primary-glow rounded-full bg-[#19A85E] px-8 text-[#f4fff8] hover:bg-[#14884b]">
-                <a href={whatsappHref} target="_blank" rel="noreferrer">
-                  Falar com especialista
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full border-[#4e74a6] bg-[#f8fbff]/80 text-[#2f527f] hover:bg-[#e3eeff]">
-                <a href="#recursos">Ver escopos de contratação</a>
-              </Button>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              {["AutoWhats com IA", "Sistemas internos sob medida", "Landing inicial em até 2 dias"].map((item, index) => (
-                <span
-                  key={item}
-                  className="reveal inline-flex items-center gap-2 rounded-full border border-[#0077ff]/30 bg-[#f1f7ff] px-4 py-2 text-sm font-semibold text-[#2f5d95]"
-                  style={{ animationDelay: `${index * 120 + 120}ms` }}
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <ActiveScopesShowcase style={{ animationDelay: "120ms" }} />
-        </section>
-
-        <section className="mt-[34px] mb-10 border-y border-[#c6d9f2] bg-[#f4f8ff]/85 pt-[34px] pb-10">
-          <div className="partners-marquee mt-[14px]">
-            <div className="partners-track">
-              <div className="partners-group">
-                {partners.map((partner, index) => (
-                  <span key={`a-${partner}-${index}`} className="partner-item">
-                    {partner}
-                  </span>
-                ))}
+        <div className="hero-intro-shell">
+          <div className="hero-wave-bg" aria-hidden="true" />
+          <section className="mx-auto grid w-full max-w-[1520px] gap-8 px-2 pb-18 pt-16 md:grid-cols-[1.08fr_0.92fr] md:items-center md:px-3">
+            <div className="reveal">
+              <p className="section-kicker">Produtos Proprietários + Software House</p>
+              <h1 className="section-title">
+                Projetos de programação para empresas: <span className="text-[#0077ff]">sistemas, automações com IA e landing pages de alta conversão</span>.
+              </h1>
+              <p className="section-text max-w-2xl">
+                Atuamos em duas frentes: softwares próprios com assinatura e desenvolvimento sob medida para operações PJ que precisam escalar com velocidade.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button asChild size="lg" className="primary-glow rounded-full bg-[#19A85E] px-8 text-[#f4fff8] hover:bg-[#14884b]">
+                  <a href={whatsappHref} target="_blank" rel="noreferrer">
+                    Falar com especialista
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-full border-[#4e74a6] bg-[#f8fbff]/80 text-[#2f527f] hover:bg-[#e3eeff]">
+                  <a href="#recursos">Ver escopos de contratação</a>
+                </Button>
               </div>
-              <div className="partners-group" aria-hidden="true">
-                {partners.map((partner, index) => (
-                  <span key={`b-${partner}-${index}`} className="partner-item">
-                    {partner}
+              <div className="mt-6 flex flex-wrap gap-3">
+                {["AutoWhats com IA", "Sistemas internos sob medida", "Landing inicial em até 2 dias"].map((item, index) => (
+                  <span
+                    key={item}
+                    className="reveal inline-flex items-center gap-2 rounded-full border border-[#0077ff]/30 bg-[#f1f7ff] px-4 py-2 text-sm font-semibold text-[#2f5d95]"
+                    style={{ animationDelay: `${index * 120 + 120}ms` }}
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {item}
                   </span>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
+
+            <ActiveScopesShowcase style={{ animationDelay: "120ms" }} />
+          </section>
+
+          <section className="mt-[34px] mb-10 border-y border-[#c6d9f2] bg-[#f4f8ff]/85 pt-[34px] pb-10">
+            <div className="partners-marquee mt-[14px]">
+              <div className="partners-track">
+                <div className="partners-group">
+                  {partners.map((partner, index) => (
+                    <span key={`a-${partner.name}-${index}`} className="partner-item">
+                      <Image src={partner.src} alt={partner.name} width={140} height={38} className="partner-logo" loading="lazy" />
+                    </span>
+                  ))}
+                </div>
+                <div className="partners-group" aria-hidden="true">
+                  {partners.map((partner, index) => (
+                    <span key={`b-${partner.name}-${index}`} className="partner-item">
+                      <Image src={partner.src} alt={partner.name} width={140} height={38} className="partner-logo" loading="lazy" />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
 
         <section id="solucao" className="mx-auto w-full max-w-[1520px] px-2 pb-18 md:px-3">
           <div className="grid gap-8 md:grid-cols-[1.02fr_0.98fr]">
@@ -313,20 +336,8 @@ export default function HomePage() {
 
         <section id="clientes" className="mx-auto w-full max-w-[1520px] px-2 py-18 md:px-3">
           <p className="section-kicker">Projetos em produção</p>
-          <h2 className="mt-3 text-3xl font-semibold text-[#0f2748]">Referências reais de produto proprietário e projetos sob medida</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {projects.map((project, index) => (
-              <article key={project.name} className="surface-card reveal flex h-full flex-col p-5" style={{ animationDelay: `${index * 80 + 80}ms` }}>
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0077ff]">{project.category}</p>
-                <h3 className="mt-2 text-xl font-semibold text-[#13365f]">{project.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#4e729e]">{project.summary}</p>
-                <a href={project.href} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#006fdc] hover:underline">
-                  Acessar projeto
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              </article>
-            ))}
-          </div>
+          <h2 className="mt-3 text-3xl font-semibold text-[#0f2748]">Visualização rápida dos projetos em produção</h2>
+          <ProjectsProductionMiniPlayer projects={projects} />
         </section>
 
         <section className="border-y border-[#c6d9f2] bg-[#eaf3ff]/80 py-18">
@@ -413,16 +424,8 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <a
-        href={whatsappHref}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Abrir conversa no WhatsApp"
-        className="floating-cta fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#19A85E] px-4 py-3 text-sm font-semibold text-[#f4fff8] shadow-[0_14px_28px_rgb(25_168_94_/_36%)] transition hover:bg-[#14884b]"
-      >
-        <MessageSquareText className="h-4 w-4" />
-        WhatsApp
-      </a>
+      <FloatingWhatsappButton message={heroWhatsappMessage} />
     </div>
   );
 }
+

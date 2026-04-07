@@ -22,10 +22,8 @@ type ScopeItem = {
 };
 
 const ROTATION_MS = 10_000;
-const TICK_MS = 100;
+const ROTATION_SECONDS = Math.floor(ROTATION_MS / 1000);
 const MAX_TILT = 7;
-const SMOOTHING = 0.24;
-const HOVER_SMOOTHING = 0.16;
 const CONTENT_FADE_OUT_MS = 140;
 const CONTENT_FADE_IN_MS = 220;
 
@@ -59,29 +57,27 @@ const scopeItems: ScopeItem[] = [
   },
 ];
 
-function formatRemaining(ms: number) {
-  const seconds = Math.max(1, Math.ceil(ms / 1000));
-  return `00:${String(seconds).padStart(2, "0")}`;
+function formatRemaining(seconds: number) {
+  const safeSeconds = Math.max(0, seconds);
+  return `00:${String(safeSeconds).padStart(2, "0")}`;
 }
 
 export function ActiveScopesShowcase({ className, style }: ActiveScopesShowcaseProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const [remainingMs, setRemainingMs] = useState(ROTATION_MS);
+  const [remainingSeconds, setRemainingSeconds] = useState(ROTATION_SECONDS);
   const [isHovering, setIsHovering] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState<"idle" | "out" | "in">("idle");
   const tiltRef = useRef<HTMLDivElement | null>(null);
-  const targetTiltRef = useRef({ x: 0, y: 0 });
-  const currentTiltRef = useRef({ x: 0, y: 0 });
-  const targetHoverLevelRef = useRef(0);
-  const currentHoverLevelRef = useRef(0);
+  const tiltTargetRef = useRef({ x: 0, y: 0 });
+  const tiltAnimationRef = useRef<number | null>(null);
   const activeIndexRef = useRef(0);
   const displayIndexRef = useRef(0);
   const outTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeScope = scopeItems[displayIndex] ?? scopeItems[0];
-  const progress = useMemo(() => ((ROTATION_MS - remainingMs) / ROTATION_MS) * 100, [remainingMs]);
+  const progress = useMemo(() => ((ROTATION_SECONDS - remainingSeconds) / ROTATION_SECONDS) * 100, [remainingSeconds]);
   const whatsappHref = buildWhatsappHref(activeScope.whatsappMessage);
 
   useEffect(() => {
@@ -96,13 +92,16 @@ export function ActiveScopesShowcase({ className, style }: ActiveScopesShowcaseP
     return () => {
       if (outTimeoutRef.current) clearTimeout(outTimeoutRef.current);
       if (inTimeoutRef.current) clearTimeout(inTimeoutRef.current);
+      if (tiltAnimationRef.current !== null) {
+        window.cancelAnimationFrame(tiltAnimationRef.current);
+      }
     };
   }, []);
 
   function switchScope(index: number, resetTimer = true) {
     setActiveIndex(index);
     if (resetTimer) {
-      setRemainingMs(ROTATION_MS);
+      setRemainingSeconds(ROTATION_SECONDS);
     }
 
     if (index === displayIndexRef.current) return;
@@ -124,69 +123,65 @@ export function ActiveScopesShowcase({ className, style }: ActiveScopesShowcaseP
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setRemainingMs((previous) => {
-        if (previous <= TICK_MS) {
+      setRemainingSeconds((previous) => {
+        if (previous <= 1) {
           const next = (activeIndexRef.current + 1) % scopeItems.length;
           switchScope(next, false);
-          return ROTATION_MS;
+          return ROTATION_SECONDS;
         }
 
-        return previous - TICK_MS;
+        return previous - 1;
       });
-    }, TICK_MS);
+    }, 1000);
 
     return () => {
       window.clearInterval(interval);
     };
   }, []);
 
-  useEffect(() => {
-    let animationId = 0;
+  function applyTilt() {
+    tiltAnimationRef.current = null;
+    if (!tiltRef.current) return;
 
-    const animate = () => {
-      currentTiltRef.current.x += (targetTiltRef.current.x - currentTiltRef.current.x) * SMOOTHING;
-      currentTiltRef.current.y += (targetTiltRef.current.y - currentTiltRef.current.y) * SMOOTHING;
-      currentHoverLevelRef.current += (targetHoverLevelRef.current - currentHoverLevelRef.current) * HOVER_SMOOTHING;
+    const rotateY = tiltTargetRef.current.x;
+    const rotateX = tiltTargetRef.current.y;
+    const shadowBlur = 24;
 
-      if (tiltRef.current) {
-        const hoverLevel = currentHoverLevelRef.current;
-        const rotateY = currentTiltRef.current.x * hoverLevel;
-        const rotateX = currentTiltRef.current.y * hoverLevel;
-        const shadowBlur = 18 + hoverLevel * 18;
-        const shadowAlpha = 0.09 + hoverLevel * 0.09;
-
-        tiltRef.current.style.transform = `perspective(1400px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
-        tiltRef.current.style.boxShadow = `${(-rotateY * 1.8).toFixed(2)}px ${(rotateX * 1.8).toFixed(2)}px ${shadowBlur.toFixed(2)}px rgba(12, 41, 78, ${shadowAlpha.toFixed(3)})`;
-      }
-
-      animationId = window.requestAnimationFrame(animate);
-    };
-
-    animationId = window.requestAnimationFrame(animate);
-
-    return () => {
-      window.cancelAnimationFrame(animationId);
-    };
-  }, []);
+    tiltRef.current.style.transform = `perspective(1400px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+    tiltRef.current.style.boxShadow = `${(-rotateY * 1.4).toFixed(2)}px ${(rotateX * 1.4).toFixed(2)}px ${shadowBlur.toFixed(2)}px rgba(12, 41, 78, 0.14)`;
+  }
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
     const xPercent = (event.clientX - rect.left) / rect.width - 0.5;
     const yPercent = (event.clientY - rect.top) / rect.height - 0.5;
 
-    targetTiltRef.current.x = xPercent * MAX_TILT;
-    targetTiltRef.current.y = -yPercent * MAX_TILT;
+    tiltTargetRef.current.x = xPercent * MAX_TILT;
+    tiltTargetRef.current.y = -yPercent * MAX_TILT;
+
+    if (tiltAnimationRef.current === null) {
+      tiltAnimationRef.current = window.requestAnimationFrame(applyTilt);
+    }
   }
 
   function handleMouseLeave() {
-    targetTiltRef.current.x = 0;
-    targetTiltRef.current.y = 0;
-    targetHoverLevelRef.current = 0;
+    if (tiltAnimationRef.current !== null) {
+      window.cancelAnimationFrame(tiltAnimationRef.current);
+      tiltAnimationRef.current = null;
+    }
+
+    tiltTargetRef.current.x = 0;
+    tiltTargetRef.current.y = 0;
+
+    if (tiltRef.current) {
+      tiltRef.current.style.transform = "perspective(1400px) rotateX(0deg) rotateY(0deg)";
+      tiltRef.current.style.boxShadow = "0 14px 34px rgba(12, 41, 78, 0.1)";
+    }
+
     setIsHovering(false);
   }
 
   function handleMouseEnter() {
-    targetHoverLevelRef.current = 1;
     setIsHovering(true);
   }
 
@@ -201,7 +196,8 @@ export function ActiveScopesShowcase({ className, style }: ActiveScopesShowcaseP
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative flex min-h-[620px] flex-col rounded-2xl border border-[#b9d2ef] bg-[#f4f9ff]/70 p-5 will-change-transform"
+        className="relative flex min-h-[620px] flex-col rounded-2xl border border-[#b9d2ef] bg-[#f4f9ff]/70 p-5 transition-[transform,box-shadow] duration-200 ease-out will-change-transform"
+        style={{ transform: "perspective(1400px) rotateX(0deg) rotateY(0deg)", boxShadow: "0 14px 34px rgba(12, 41, 78, 0.1)" }}
       >
         <div
           aria-hidden="true"
@@ -220,7 +216,7 @@ export function ActiveScopesShowcase({ className, style }: ActiveScopesShowcaseP
             <Sparkles className="h-3.5 w-3.5" />
             Escopos ativos
           </p>
-          <p className="text-xs font-semibold tracking-[0.1em] text-[#8aa5c8]">Troca em {formatRemaining(remainingMs)}</p>
+          <p className="text-xs font-semibold tracking-[0.1em] text-[#8aa5c8]">Troca em {formatRemaining(remainingSeconds)}</p>
           </div>
 
           <h2 className="mt-5 truncate text-3xl font-semibold leading-tight text-[#0f2947]" title={activeScope.title}>

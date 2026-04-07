@@ -1,5 +1,6 @@
 ﻿import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { FloatingWhatsappButton } from "@/components/marketing/floating-whatsapp-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const faqs = [
@@ -56,6 +57,7 @@ export default function FaqPage() {
       </main>
 
       <MarketingFooter />
+      <FloatingWhatsappButton message="Oi! Quero tirar dúvidas sobre os projetos da AutoPilot." />
     </div>
   );
 }

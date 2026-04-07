@@ -5,6 +5,8 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { ProjectPricingPanel } from "@/components/marketing/project-pricing-panel";
+import { SystemsProjectsMiniPlayer } from "@/components/marketing/systems-projects-miniplayer";
+import { FloatingWhatsappButton } from "@/components/marketing/floating-whatsapp-button";
 import { getProjectOffer, projectOffers } from "@/lib/project-offers";
 
 type ProjectPageProps = {
@@ -15,11 +17,13 @@ const systemsCases = [
   {
     title: "Findmy Angel",
     href: "https://www.findmyangel.com/",
+    previewScale: 0.58,
     description: "Plataforma construída para fluxo operacional específico de negócio.",
   },
   {
     title: "Doutor Eu",
     href: "https://projeto-tadeu-adv-web.vercel.app/",
+    previewScale: 0.56,
     description: "Projeto direcional com foco em presença digital e aquisição.",
   },
 ];
@@ -130,45 +134,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 Explore duas referências da frente de sistemas para apresentar melhor o padrão de entrega.
               </p>
 
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
-                {systemsCases.map((item) => (
-                  <article key={item.href} className="overflow-hidden rounded-2xl border border-[#b8d2f1] bg-[#f8fbff]">
-                    <div className="flex items-center justify-between border-b border-[#c6dbf4] bg-[#eef5ff] px-4 py-2">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#ff6b6b]" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#f6c453]" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#2ccf84]" />
-                      </div>
-                      <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4f74a1]">{item.title}</span>
-                    </div>
-                    <iframe
-                      src={item.href}
-                      title={`Visualizador ${item.title}`}
-                      className="h-[360px] w-full bg-[#e9f3ff]"
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="border-t border-[#c6dbf4] px-4 py-3">
-                      <p className="text-sm text-[#4d719d]">{item.description}</p>
-                      <a
-                        href={item.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[#006fdc] hover:underline"
-                      >
-                        Abrir site completo
-                        <ArrowRight className="h-4 w-4" />
-                      </a>
-                    </div>
-                  </article>
-                ))}
-              </div>
+              <SystemsProjectsMiniPlayer projects={systemsCases} />
             </article>
           </section>
         ) : null}
       </main>
 
       <MarketingFooter />
+      <FloatingWhatsappButton message="Oi! Quero conversar sobre este escopo de projeto da AutoPilot." />
     </div>
   );
 }

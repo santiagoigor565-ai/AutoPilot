@@ -2,6 +2,7 @@
 import { ArrowRight, Check } from "lucide-react";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { FloatingWhatsappButton } from "@/components/marketing/floating-whatsapp-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { billingPlanCatalog, formatCurrencyFromCents } from "@/lib/billing/plans";
@@ -173,6 +174,7 @@ export default function PricingPage() {
       </main>
 
       <MarketingFooter />
+      <FloatingWhatsappButton message="Oi! Quero ajuda para escolher o melhor plano da AutoPilot." />
     </div>
   );
 }
